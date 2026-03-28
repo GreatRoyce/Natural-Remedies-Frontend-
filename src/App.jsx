@@ -6,6 +6,7 @@ import Explore from "./pages/Explore";
 import Contribute from "./pages/Contribute";
 import UserDashboard from "./pages/dashboard/UserDashboard";
 import HerbalistDashboard from "./pages/dashboard/HerbalistDashboard";
+import AdminDashboard from "./pages/dashboard/AdminDashboard";
 
 // import About from "./pages/About"; // another page
 
@@ -19,6 +20,7 @@ const App = () => {
         <Route path="contribute" element={<Contribute />} />
         <Route path="/dashboard/user" element={<UserDashboard />} />
         <Route path="/dashboard/herbalist" element={<HerbalistDashboard />} />
+        <Route path="/system/admin" element={<AdminDashboard />} />
         {/* <Route path="/about" element={<About />} /> */}
       </Routes>
     </Router>

@@ -83,7 +83,7 @@ const RegisterForm = () => {
               : "border border-accent text-accent"
           }`}
         >
-          As User
+          As Client
         </button>
 
         <button
