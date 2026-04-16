@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Search, Heart, Bookmark, Users, AlertCircle } from "lucide-react";
+import { getUser } from "../../../shared/utils/storage";
 
 // -------------------- Subcomponents --------------------
 
@@ -78,6 +79,7 @@ const FollowingItem = ({ herbalist, onUnfollow }) => (
 // -------------------- Main Component --------------------
 
 function UserDashboard() {
+  const [user] = useState(() => getUser());
   const [activeSection, setActiveSection] = useState("discovery");
   const [remedies] = useState([]);
   const [savedRemedies] = useState([]);
@@ -99,6 +101,29 @@ function UserDashboard() {
   const handleSave = (id) => console.log("Save remedy", id);
   const handleUnfollow = (id) => console.log("Unfollow herbalist", id);
 
+  const profileEntries = useMemo(() => {
+    if (!user) return [];
+    return Object.entries(user)
+      .filter(([key, value]) => {
+        if (value === undefined || value === null) return false;
+        const lowerKey = key.toLowerCase();
+        return (
+          lowerKey !== "password" &&
+          lowerKey !== "accesstoken" &&
+          lowerKey !== "refreshtoken"
+        );
+      })
+      .map(([key, value]) => {
+        const label = key
+          .replace(/[_-]+/g, " ")
+          .replace(/([a-z])([A-Z])/g, "$1 $2")
+          .replace(/\b\w/g, (match) => match.toUpperCase());
+        const displayValue =
+          typeof value === "object" ? JSON.stringify(value) : String(value);
+        return { label, value: displayValue };
+      });
+  }, [user]);
+
   const tabs = [
     { id: "discovery", label: "Discover", icon: <Search size={14} /> },
     { id: "saved", label: "Saved", icon: <Bookmark size={14} /> },
@@ -106,12 +131,15 @@ function UserDashboard() {
     { id: "following", label: "Following", icon: <Users size={14} /> },
   ];
 
+  const displayName =
+    user?.name || user?.username || user?.email || "User";
+
   return (
     <div className="min-h-screen bg-primarybackground font-poppins text-tertiary">
       {/* Header */}
       <header className="bg-tertiarybackground border-b border-secondarybackground px-4 py-3 sm:px-6 sm:py-4">
         <h1 className="text-2xl font-montserrat font-semibold">
-          User Dashboard
+          {displayName} Dashboard
         </h1>
       </header>
 
@@ -133,6 +161,39 @@ function UserDashboard() {
 
       {/* Main Content */}
       <main className="p-4 sm:p-6 space-y-6">
+        <section className="bg-tertiarybackground border border-secondarybackground rounded-lg p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h2 className="font-montserrat font-semibold text-base sm:text-lg">
+                Your Profile
+              </h2>
+              <p className="text-xs text-secondarybackground">
+                Signed in as {displayName}
+              </p>
+            </div>
+          </div>
+
+          {profileEntries.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+              {profileEntries.map((entry) => (
+                <div
+                  key={entry.label}
+                  className="bg-primarybackground border border-secondarybackground rounded-lg p-3 text-xs sm:text-sm"
+                >
+                  <p className="text-secondarybackground uppercase text-[10px]">
+                    {entry.label}
+                  </p>
+                  <p className="mt-1 font-medium break-words">{entry.value}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-4">
+              <EmptyState message="No user details found. Please log in again." />
+            </div>
+          )}
+        </section>
+
         {loading ? (
           <EmptyState message="Loading content..." />
         ) : (

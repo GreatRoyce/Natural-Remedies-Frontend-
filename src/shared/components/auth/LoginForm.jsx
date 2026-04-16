@@ -1,15 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import FormInput from "./FormInput";
 import CompBtn from "../ui/CompBtn";
 import { login } from "../../utils/auth";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const getDashboardRoute = (user) => {
+    const role = user?.role?.toString().toLowerCase();
+    if (role === "herbalist") return "/dashboard/herbalist";
+    if (role === "admin") return "/system/admin";
+    if (role === "superadmin" || role === "super-admin") return "/super-admin";
+    return "/dashboard/user";
+  };
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,7 +29,8 @@ const LoginForm = () => {
     setLoading(true);
     setError("");
     try {
-      await login(formData);
+      const user = await login(formData);
+      navigate(getDashboardRoute(user), { replace: true });
     } catch (err) {
       const message =
         err?.response?.data?.message || err?.message || "Login failed.";

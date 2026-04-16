@@ -1,12 +1,14 @@
 // src/utils/auth.js
 import api from "./api";
-import { setToken, removeToken } from "./storage";
+import { setToken, removeToken, setUser, removeUser } from "./storage";
 
 export const login = async (credentials) => {
   const res = await api.post("/auth/login", credentials);
   const { accessToken, refreshToken, data } = res.data;
   setToken(accessToken, refreshToken);
-  return data;
+  const user = data?.user || data;
+  setUser(user);
+  return user;
 };
 
 export const register = async (userData) => {
@@ -16,6 +18,7 @@ export const register = async (userData) => {
 
 export const logout = () => {
   removeToken();
+  removeUser();
   window.location.href = "/auth";
 };
 

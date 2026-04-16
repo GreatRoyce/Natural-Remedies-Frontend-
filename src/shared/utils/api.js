@@ -26,7 +26,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // --------------------
@@ -38,7 +38,9 @@ api.interceptors.response.use(
     const originalRequest = error.config;
 
     if (!error.response) {
-      return Promise.reject({ message: "Network error. Check your connection." });
+      return Promise.reject({
+        message: "Network error. Check your connection.",
+      });
     }
 
     const { status } = error.response;
@@ -58,7 +60,7 @@ api.interceptors.response.use(
         const res = await axios.post(
           `${BASE_URL}/auth/refresh`,
           { refreshToken },
-          { withCredentials: true }
+          { withCredentials: true },
         );
 
         const { accessToken } = res.data;
@@ -76,7 +78,7 @@ api.interceptors.response.use(
     if (status >= 500) console.error("Server error");
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
