@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Users,
   Eye,
@@ -7,9 +8,10 @@ import {
   Plus,
   Edit,
   Trash2,
+  LogOut, // added logout icon
 } from "lucide-react";
 
-/* -------------------- Reusable Components -------------------- */
+/* -------------------- Reusable Components (unchanged) -------------------- */
 
 const StatCard = ({ label, value, icon }) => (
   <div className="bg-tertiarybackground border border-secondarybackground rounded-lg p-4 flex justify-between items-center">
@@ -33,11 +35,13 @@ const SectionCard = ({ title, children, action }) => (
   </div>
 );
 
-/* -------------------- List Subcomponents -------------------- */
+/* -------------------- List Subcomponents (unchanged) -------------------- */
 
 const RecentFollowersList = ({ followers }) => {
   if (followers.length === 0) {
-    return <p className="text-xs text-secondarybackground">No followers yet.</p>;
+    return (
+      <p className="text-xs text-secondarybackground">No followers yet.</p>
+    );
   }
 
   return (
@@ -62,7 +66,11 @@ const RecentFollowersList = ({ followers }) => {
 
 const TopRemedyDisplay = ({ remedy }) => {
   if (!remedy) {
-    return <p className="text-xs text-secondarybackground">No performance data available.</p>;
+    return (
+      <p className="text-xs text-secondarybackground">
+        No performance data available.
+      </p>
+    );
   }
 
   return (
@@ -81,13 +89,18 @@ const TopRemedyDisplay = ({ remedy }) => {
 
 const RecentCommentsList = ({ comments }) => {
   if (comments.length === 0) {
-    return <p className="text-xs text-secondarybackground">No recent comments.</p>;
+    return (
+      <p className="text-xs text-secondarybackground">No recent comments.</p>
+    );
   }
 
   return (
     <div className="space-y-3">
       {comments.map((comment) => (
-        <div key={comment._id} className="border-b border-secondarybackground pb-2">
+        <div
+          key={comment._id}
+          className="border-b border-secondarybackground pb-2"
+        >
           <p className="text-xs">
             <span className="font-semibold">{comment.user.username}</span> on{" "}
             <span className="italic">{comment.remedyName}</span>
@@ -101,7 +114,11 @@ const RecentCommentsList = ({ comments }) => {
 
 const MyRemediesList = ({ remedies, onDelete }) => {
   if (remedies.length === 0) {
-    return <p className="text-xs text-secondarybackground">You haven’t created any remedies yet.</p>;
+    return (
+      <p className="text-xs text-secondarybackground">
+        You haven’t created any remedies yet.
+      </p>
+    );
   }
 
   return (
@@ -138,6 +155,7 @@ const MyRemediesList = ({ remedies, onDelete }) => {
 /* -------------------- Main Component -------------------- */
 
 function HerbalistDashboard() {
+  const navigate = useNavigate();
   const [overview] = useState({
     followers: 0,
     remedies: 0,
@@ -155,18 +173,37 @@ function HerbalistDashboard() {
     console.log("Delete remedy", id);
   };
 
+  // Logout handler – replace with your actual logout logic
+  const handleLogout = () => {
+    // Example: clear localStorage, remove auth token, redirect to login
+    localStorage.removeItem("token");
+    // Redirect to login page (adjust path as needed)
+    navigate("/");
+  };
+
   return (
     <div className="min-h-screen bg-primarybackground font-poppins text-tertiary">
-      {/* Header */}
-      <header className="bg-tertiarybackground border-b border-secondarybackground px-4 py-4 flex justify-between items-center">
+      {/* Header with logout button */}
+      <header className="bg-tertiarybackground border-b border-secondarybackground px-4 py-4 flex flex-wrap justify-between items-center gap-3">
         <h1 className="text-2xl font-montserrat font-semibold">
           Herbalist Dashboard
         </h1>
 
-        <button className="flex items-center gap-1 bg-primary text-white px-3 py-2 rounded-lg text-xs sm:text-sm hover:opacity-90 transition">
-          <Plus size={14} />
-          Create Remedy
-        </button>
+        <div className="flex items-center gap-3">
+          <button className="flex items-center gap-1 bg-primary text-white px-3 py-2 rounded-lg text-xs sm:text-sm hover:opacity-90 transition">
+            <Plus size={14} />
+            Create Remedy
+          </button>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1 bg-red-500 text-white px-3 py-2 rounded-lg text-xs sm:text-sm hover:bg-red-600 transition"
+          >
+            <LogOut size={14} />
+            Logout
+          </button>
+        </div>
       </header>
 
       <main className="p-4 sm:p-6 space-y-6">

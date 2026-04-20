@@ -29,7 +29,7 @@ const EnhancedUsersTable = ({
         </thead>
         <tbody className="divide-y divide-gray-200">
           {users.map(user => {
-            const isSuperAdmin = user.role === "superadmin";
+            const isSuperAdmin = user.role === "super-admin";
             const canModify = !isSuperAdmin; // self-check can be added via prop
 
             return (

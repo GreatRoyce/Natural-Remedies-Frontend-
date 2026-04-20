@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import FormInput from "./FormInput";
 import CompBtn from "../ui/CompBtn";
 import { login } from "../../utils/auth";
@@ -12,6 +13,7 @@ const LoginForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const getDashboardRoute = (user) => {
     const role = user?.role?.toString().toLowerCase();
@@ -40,6 +42,8 @@ const LoginForm = () => {
     }
   };
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 text-sm">
       <FormInput
@@ -51,18 +55,28 @@ const LoginForm = () => {
         required
       />
 
-      <FormInput
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-        required
-      />
+      {/* Password field with reveal toggle */}
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+          className="w-full px-3 py-2 border border-secondarybackground rounded-lg bg-tertiarybackground focus:outline-none focus:ring-2 focus:ring-primary/50 pr-10"
+        />
+        <button
+          type="button"
+          onClick={togglePasswordVisibility}
+          className="absolute inset-y-0 right-0 flex items-center pr-3 text-secondarybackground hover:text-primary transition"
+          aria-label={showPassword ? "Hide password" : "Show password"}
+        >
+          {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+        </button>
+      </div>
 
-      {error && (
-        <p className="text-xs text-red-600">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-600">{error}</p>}
 
       <CompBtn
         type="submit"

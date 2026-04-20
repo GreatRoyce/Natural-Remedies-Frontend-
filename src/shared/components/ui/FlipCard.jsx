@@ -1,7 +1,4 @@
-import React, { useState } from "react";
-import { motion as Motion } from "framer-motion";
-import Accordion from "./Accordion";
-import Marquee from "react-fast-marquee";
+import React from "react";
 
 const FlipCard = ({
   title,
@@ -9,71 +6,72 @@ const FlipCard = ({
   image,
   contributor,
   duration,
-  preparation,
-  ingredients,
+  preparation,   // this is now an array of { id, text }
+  ingredients,   // this is now an array of { id, text }
   usage,
 }) => {
-  const [flipped, setFlipped] = useState(false);
-
   return (
-    <div className="w-auto h-96 perspective ">
-      <div></div>
-      <Motion.div
-        className="relative w-full  h-full preserve-3d  "
-        animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
-      >
-        {/* FRONT */}
-        <div className="absolute inset-0 bg-primary/95  text-white rounded-xl shadow-md companyname backface-hidden p-4 flex flex-col justify-between">
+    <div className="group relative w-full max-w-sm h-screen] bg-white rounded-xl shadow-lg  transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      {/* Image section with category badge */}
+      <div className="relative h-48 overflow-hidden bg-gray-100">
+        <img
+          src={image}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
+        <span className="absolute top-3 left-3 z-10 bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+          {category}
+        </span>
+      </div>
+
+      {/* Content area */}
+      <div className="p-4 space-y-3">
+        <h3 className="text-lg font-bold text-gray-800 line-clamp-1">
+          {title}
+        </h3>
+
+        {/* Key details grid */}
+        <div className="grid grid-cols-2 gap-2 text-sm">
           <div>
-            {/* Header: title and category */}
-            <div className="flex justify-between items-start gap-2 mb-4">
-              <h3 className="text-sm font-semibold break-words flex-1">
-                {title}
-              </h3>
-              <span className="text-sm opacity-70 whitespace-nowrap">
-                {category}
-              </span>
-            </div>
-
-            {/* Image */}
-            <img
-              src={image}
-              alt={title}
-              className="h-56 w-full object-cover rounded-md mb-3"
-            />
-
-            {/* Footer: contributor and duration */}
-            <div className="flex justify-between items-center text-xs opacity-70">
-              <span>By {contributor}</span>
-              <span>Duration: {duration}</span>
-            </div>
+            <span className="font-semibold text-gray-700"> Duration:</span>
+            <p className="text-gray-600">{duration}</p>
           </div>
-          <button
-            onClick={() => setFlipped(true)}
-            className="px-4 py-2 bg-white text-primary font-semibold rounded-md"
-          >
-            See More
-          </button>
+          <div>
+            <span className="font-semibold text-gray-700"> Contributor:</span>
+            <p className="text-gray-600">{contributor}</p>
+          </div>
         </div>
 
-        {/* BACK */}
-        <div
-          className="absolute inset-0 bg-tertiarybackground text-primary rounded-xl shadow-lg backface-hidden p-4 overflow-y-auto"
-          style={{ transform: "rotateY(180deg)" }}
-        >
-          <Accordion title="Ingredients" content={ingredients} />
-          <Accordion title="Preparation" content={preparation} />
-          <Accordion title="Usage" content={usage} />
-
-          <button
-            onClick={() => setFlipped(false)}
-            className="mt-4  px-4 py-2 bg-primary text-white font-semibold rounded-md"
-          >
-            Back
-          </button>
+        {/* Ingredients list */}
+        <div>
+          <span className="font-semibold text-gray-700">Ingredients:</span>
+          <ul className="list-disc pl-5 mt-1 space-y-1">
+            {ingredients.map((item) => (
+              <li key={item.id} className="text-gray-600 text-sm">
+                {item.text}
+              </li>
+            ))}
+          </ul>
         </div>
-      </Motion.div>
+
+        {/* Preparation steps */}
+        <div>
+          <span className="font-semibold text-gray-700"> Preparation:</span>
+          <ol className="list-decimal pl-5 mt-1 space-y-1">
+            {preparation.map((step) => (
+              <li key={step.id} className="text-gray-600 text-sm">
+                {step.text}
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        {/* Usage */}
+        <div>
+          <span className="font-semibold text-gray-700"> Usage:</span>
+          <p className="text-gray-600 text-sm mt-1 pb-10">{usage}</p>
+        </div>
+      </div>
     </div>
   );
 };
